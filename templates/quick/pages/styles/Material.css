@@ -1,0 +1,43 @@
+.container {
+    float:left;
+    background: #fff;
+    font-family: Menlo, 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', Monaco, Consolas, monospace;
+    font-size: 1.0rem;
+    padding: 2.5rem 3rem;
+    -webkit-font-smoothing: antialiased;
+    border: 1px solid #E1E1E1;
+    border-radius: 4px;
+}
+
+.function-parameters {
+    list-style: none;
+}
+
+.function-type-parameters {
+    list-style: none;
+}
+
+.module-function-list {
+    list-style: none;
+}
+
+.module-class-list {
+    list-style: none;
+}
+
+.member-toc {
+    display: inline;
+    font-size: 0.7rem;
+}
+
+table {
+    border-collapse: collapse;
+}
+tr {
+    border: solid;
+    border-width: 1px 0;
+    border-color: gainsboro;
+}
+table tr:last-child {
+    border-bottom: none;
+}

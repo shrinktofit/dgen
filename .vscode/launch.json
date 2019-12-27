@@ -1,0 +1,39 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/templates/quick",
+            "name": "Next: dev",
+            "runtimeExecutable": "${workspaceFolder}/templates/quick/node_modules/.bin/next",
+            "runtimeArgs": [
+                "dev"
+            ],
+            "port": 9229,
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "NODE_OPTIONS": "--inspect-brk"
+            }
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Attach nice",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}/templates/quick"
+        },
+    ],
+    "compounds": [{
+        "name": "Next: Full",
+        "configurations": [
+            "Next: dev",
+            "Attach nice"
+        ]
+    }]
+}
