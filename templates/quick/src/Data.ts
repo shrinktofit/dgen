@@ -1,98 +1,72 @@
 
 import * as refer from '@cocos/refer';
 
-const functionEntity: refer.Entity = {
-    name: 'add',
-    traits: [],
-};
-const functionTrait: refer.FunctionTrait = {
-    traitKind: 'function',
-    entity: functionEntity,
-    typeParameters: [],
-    parameters: [{
-        name: 'lhs',
-        tags: {
-            param: 'Left operand',
-        },
-    }, {
-        name: 'rhs',
-        tags: {
-            param: 'Right operand',
-        },
-    }],
-    tags: {
-        __untagged__: 'Add two number.',
-        'returns': 'The sum.',
-    },
-};
-functionEntity.traits.push(functionTrait);
-
-const method1: refer.Method = {
-    kind: 'method',
-    name: 'getComponent()',
-};
-
-const classEntity: refer.Entity = {
-    name: 'Node',
-    traits: [],
-};
-const classTrait: refer.ClassTrait = {
-    traitKind: 'class',
-    entity: classEntity,
-    members: [
-        {kind: 'method', name: 'getComponent', tags: { '__untagged__': 'Get (the first) component.' }},
-        {kind: 'method', name: 'getComponent', tags: { '__untagged__': 'Get all components.' }},
-        {kind: 'method', name: 'addComponent', tags: { '__untagged__': 'Add a component.' }},
-        {kind: 'property', name: 'name', tags: { '__untagged__': 'Node name.' } },
-    ],
-    tags: {
-        __untagged__: 'Scene graph',
-        description: `
-The basic unit of a scene graph, it:
-* contains references to parent or children node,
-* maintains one or more components and
-* has transformation in 3D space.
-`
-    },
-};
-classEntity.traits.push(classTrait);
-
-function decorate<T>(o: T, callback: (o: T) => void) {
-    callback(o);
-    return o;
-};
-
-const moduleData: refer.Module = {
-    url: 'cc',
-    entities: [
-        functionEntity,
-        classEntity,
-        decorate<refer.Entity>({
-            name: 'Pool',
-            traits: [],
-        }, (entity) => {
-            entity.traits.push({
-                traitKind: 'class',
-                entity,
+const project: refer.Project = {
+    name: 'Cocos Creator 3D',
+    modules: [{
+        kind: 'module',
+        url: 'cc',
+        members: [
+            {
+                kind: 'function',
+                name: 'add',
+                typeParameters: [],
+                parameters: [{
+                    kind: 'parameter',
+                    name: 'lhs',
+                    tags: {
+                        param: 'Left operand',
+                    },
+                }, {
+                    kind: 'parameter',
+                    name: 'rhs',
+                    tags: {
+                        param: 'Right operand',
+                    },
+                }],
+                tags: {
+                    __untagged__: 'Add two number.',
+                    'returns': 'The sum.',
+                },
+            },
+            {
+                kind: 'class',
+                name: 'Node',
+                members: [
+                    {kind: 'method', name: 'getComponent', parameters: [], tags: { '__untagged__': 'Get (the first) component.' }},
+                    {kind: 'method', name: 'getComponents', parameters: [], tags: { '__untagged__': 'Get all components.' }},
+                    {kind: 'method', name: 'addComponent', parameters: [], tags: { '__untagged__': 'Add a component.' }},
+                    {kind: 'property', name: 'name', tags: { '__untagged__': 'Node name.' } },
+                ],
+                tags: {
+                    __untagged__: 'Scene graph',
+                    description: `
+    The basic unit of a scene graph, it:
+    * contains references to parent or children node,
+    * maintains one or more components and
+    * has transformation in 3D space.
+    `
+                },
+            },
+            {
+                kind: 'class',
+                name: 'Pool',
                 members: [{
                     kind: 'method',
                     name: 'alloc',
+                    parameters: [], 
                     tags: { __untagged__: 'Allocate a resource.' }
                 }, {
                     kind: 'method',
                     name: 'free',
+                    parameters: [], 
                     tags: { __untagged__: 'Free a resource.' }
                 }],
-                typeParameters: [{name: 'T'}, {name: 'U'}],
-            });
-        }),
-        decorate<refer.Entity>({
-            name: 'PixelFormat',
-            traits: [],
-        }, (entity) => {
-            entity.traits.push({
-                traitKind: 'enum',
-                entity,
+                typeParameters: [{ kind: 'type-parameter', name: 'T'}, { kind: 'type-parameter', name: 'U'}],
+            },
+            {
+                kind: 'enum',
+                name: 'PixelFormat',
                 enumerators: [{
                     name: 'RGB8',
                     tags: { __untagged__: 'The pixel has 3 channel: R, G, B. Every channel is a 8 bits integer', }
@@ -103,17 +77,16 @@ const moduleData: refer.Module = {
                     name: 'RGBA32F',
                     tags: { __untagged__: 'The pixel has 4 channel: R, G, B, A. Every channel is a 32 bits IEEE floating number', }
                 }],
-            });
-        }),
-    ],
-};
-
-const project: refer.Project = {
-    name: 'Cocos Creator 3D',
-    modules: [
-        moduleData,
-    ],
-    globals: [],
+                tags: {
+                    '__untagged__': 'Describes the format of a pixel.'
+                },
+            }
+        ],
+    }],
+    globals: {
+        kind: 'globals',
+        members: [],
+    },
 };
 
 export function getModuleData(id: string) {
@@ -145,7 +118,7 @@ export function findTrait<Trait> (traitKind: 'function' | 'class' | 'enum', id: 
         }
     }
 
-    const entities = targetNamespace ? targetNamespace.entities : project.globals;
+    const entities = targetNamespace ? targetNamespace.entities : project.globals.entities;
     const entity = entities.find((entity) => entity.name === id);
     if (!entity) {
         throw new Error(`Has no ${id} in current namespace/module/global, ${entities.map((e) => e.name)}`);
@@ -157,4 +130,48 @@ export function findTrait<Trait> (traitKind: 'function' | 'class' | 'enum', id: 
     }
 
     return trait;
+}
+
+export function getDescription(documentable: refer.Documentable) {
+    return documentable.tags?.description ?? documentable.tags?.__untagged__ ?? '';
+}
+
+export function uniqueFindEntity(path: string, moduleId?: string) {
+    const project = getProject();
+
+    let root: refer.Globals | refer.Module | undefined;
+    if (moduleId === undefined) {
+        root = project.globals;
+    } else {
+        root = project.modules.find((m) => m.url === moduleId);
+        if (!root) {
+            throw new Error(`No such module: "${moduleId}"`);
+        }
+    }
+
+    const segments = path.split('/');
+    let currentNamespace:
+        | refer.Globals
+        | refer.Module
+        | refer.NamespaceTrait
+        | refer.ClassTrait
+        | refer.EnumTrait
+        | refer.VariableTrait
+        = root;
+    const nodeStack: Array<refer.Globals | refer.Module | refer.ClassTrait | refer.EnumTrait> = [];
+    segments.forEach((segment, index) => {
+        switch (currentNamespace.kind) {
+            case 'globals':
+            case 'module':
+            case 'namespace':
+                currentNamespace.members.find((member) => member.name === segment);
+                break;
+            case 'class':
+                currentNamespace.members.find((member) => member.name === segment);
+            case 'enum':
+                break;
+            case 'variable':
+                break;
+        }
+    });
 }

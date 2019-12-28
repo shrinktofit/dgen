@@ -13,12 +13,12 @@
             "runtimeArgs": [
                 "dev"
             ],
-            "port": 9229,
+            "port": 12139,
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "env": {
-                "NODE_OPTIONS": "--inspect-brk"
+                "NODE_OPTIONS": "--inspect-brk=12139"
             }
         },
         {

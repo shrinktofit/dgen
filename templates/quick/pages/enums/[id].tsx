@@ -1,12 +1,13 @@
 
 import React from 'react';
 import * as refer from '@cocos/refer';
-import { getModuleData, getProject, findTrait } from '../../src/Data';
+import { getModuleData, getProject, findTrait, getDescription } from '../../src/Data';
 import { useRouter } from 'next/router';
 import '../styles/Material.css';
 import ReactMarkdown from 'react-markdown';
 import { isOptionalOrEmptyArray } from '../../src/Utils';
 import { simpleToc } from '../../src/SimpleToc';
+import DescriptionText from '../../src/DescriptionText';
 
 function errorPage(message: string) {
     return (<div>
@@ -14,7 +15,7 @@ function errorPage(message: string) {
     </div>);
 }
 
-function memberToc(members: refer.ClassTrait['members']) {
+function memberToc(members: refer.Class['members']) {
     return (<div>
         <table>
         {members.map((member) => <tr>
@@ -39,13 +40,15 @@ export default () => {
     return (
         <div className="container">
             <h3>
-                {`${enumTrait.entity.name}`}
+                {`${enumTrait.parent.name}`}
             </h3>
 
+            <DescriptionText source={getDescription(enumTrait)} />
+
             <h4>
-                Constants
+                Enumerators
             </h4>
-            {simpleToc(enumTrait.enumerators.map((e) => ({ key: e.name, value: e.tags?.__untagged__ })))}
+            {simpleToc(enumTrait.enumerators.map((e) => ({ key: e.name, value: getDescription(e) })))}
         </div>
     );
 };

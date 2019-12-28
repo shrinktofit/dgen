@@ -14,7 +14,7 @@ const ModulePage = () => {
     }
 
     const functions: refer.FunctionTrait[] = [];
-    const classes: refer.ClassTrait[] = [];
+    const classes: refer.Class[] = [];
     const enums: refer.EnumTrait[] = [];
 
     for (const entity of moduleData.entities) {
@@ -35,7 +35,7 @@ const ModulePage = () => {
             <div>
                 <h4>Classes</h4>
                 <ul className="module-class-list">{classes.map((cls) => <li>
-                    <a href={`/classes/${cls.entity.name}?module=${mid}`}>{ `${cls.entity.name}` }</a>
+                    <a href={`/classes/${cls.parent.name}?module=${mid}`}>{ `${cls.parent.name}` }</a>
                 </li>)}</ul>
             </div>
         )}
@@ -44,7 +44,7 @@ const ModulePage = () => {
             <div>
                 <h4>Enumerations</h4>
                 <ul className="module-class-list">{enums.map((e) => <li>
-                    <a href={`/enums/${e.entity.name}?module=${mid}`}>{ `${e.entity.name}` }</a>
+                    <a href={`/enums/${e.parent.name}?module=${mid}`}>{ `${e.parent.name}` }</a>
                 </li>)}</ul>
             </div>
         )}

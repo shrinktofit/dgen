@@ -1,9 +1,12 @@
-
 declare module "@cocos/refer" {
     export interface Project {
         name: string;
         modules: Module[];
-        globals: Entity[];
+        globals: Globals;
+    }
+
+    interface ENode<T extends string> {
+        kind: T,
     }
 
     export interface Tag {
@@ -14,77 +17,76 @@ declare module "@cocos/refer" {
         tags?: Record<string, string>;
     }
 
-    export interface Module {
+    export interface Module extends ENode<'module'> {
         url: string;
-        entities: Entity[];
+        members: NamespaceMember[];
     }
 
-    export interface Entity extends Documentable {
-        name?: string;
-        traits: Array<ClassTrait | InterfaceTrait | FunctionTrait | EnumTrait | NamespaceTrait>;
+    export interface NamespaceTrait extends ENode<'namespace'>, Documentable, Nameable {
+        members: NamespaceMember[];
     }
 
-    interface EntityTrait extends Documentable {
-        entity: Entity;
+    export interface Globals extends ENode<'globals'> {
+        members: NamespaceMember[];
     }
 
-    export interface ClassTrait extends EntityTrait {
-        traitKind: 'class';
+    export type NamespaceMember =
+        | NamespaceTrait
+        | VariableTrait
+        | ClassTrait
+        | InterfaceTrait
+        | FunctionTrait
+        | EnumTrait
+        ;
+
+    export interface Nameable {
+        name: string;
+    }
+
+    interface VariableTrait extends ENode<'variable'>, Documentable, Nameable {
+
+    }
+
+    export interface ClassTrait extends ENode<'class'>, Documentable, Nameable {
         typeParameters?: TypeParameter[];
         members: Array<Method | Property | Accessor>;
         extends?: Array<Type>;
         implements?: Array<Type>;
     }
 
-    export interface Method extends Documentable {
-        kind: 'method';
+    export interface Method extends ENode<'method'>, Documentable, Nameable {
         name: string;
-    }
-
-    export interface Property extends Documentable {
-        kind: 'property';
-        name: string;
-    }
-
-    export interface Accessor extends Documentable {
-        kind: 'accessor';
-        name: string;
-    }
-
-    export interface InterfaceTrait extends EntityTrait {
-        traitKind: 'interface';
-    }
-
-    export interface FunctionTrait extends EntityTrait {
-        traitKind: 'function';
-        typeParameters: TypeParameter[];
+        typeParameters?: TypeParameter[];
         parameters: Parameter[];
         type?: Type;
     }
 
-    export interface EnumTrait extends EntityTrait {
-        traitKind: 'enum';
-        enumerators: Array<{
-            name: string;
-        } & Documentable>;
-    }
-
-    export interface NamespaceTrait extends EntityTrait {
-        traitKind: 'namespace';
-        entities: Entity[];
-    }
-
-    export interface Property extends Documentable {
-
-    }
-
-    export interface Parameter extends Documentable {
+    export interface Property extends ENode<'property'>, Documentable, Nameable {
         name: string;
+    }
+
+    export interface Accessor extends ENode<'accessor'>, Documentable, Nameable {
+        name: string;
+    }
+
+    export interface InterfaceTrait extends ENode<'interface'>, Documentable, Nameable {
+    }
+
+    export interface FunctionTrait extends ENode<'function'>, Documentable, Nameable {
+        typeParameters?: TypeParameter[];
+        parameters: Parameter[];
         type?: Type;
     }
 
-    export interface TypeParameter extends Documentable {
-        name: string;
+    export interface EnumTrait extends ENode<'enum'>, Documentable, Nameable {
+        enumerators: Array<{ } & Nameable & Documentable>;
+    }
+
+    export interface Parameter extends ENode<'parameter'>, Documentable, Nameable {
+        type?: Type;
+    }
+
+    export interface TypeParameter extends ENode<'type-parameter'>, Documentable, Nameable {
     }
 
     export type Type = ArrayType | TupleType | IntersectionType;

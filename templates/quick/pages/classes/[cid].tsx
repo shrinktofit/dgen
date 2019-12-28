@@ -1,12 +1,12 @@
 
 import React from 'react';
 import * as refer from '@cocos/refer';
-import { getModuleData, getProject, findTrait } from '../../src/Data';
+import { getModuleData, getProject, findTrait, getDescription } from '../../src/Data';
 import { useRouter } from 'next/router';
 import '../styles/Material.css';
-import ReactMarkdown from 'react-markdown';
 import { isOptionalOrEmptyArray } from '../../src/Utils';
 import { simpleToc } from '../../src/SimpleToc';
+import DescriptionText from '../../src/DescriptionText';
 
 function errorPage(message: string) {
     return (<div>
@@ -14,7 +14,7 @@ function errorPage(message: string) {
     </div>);
 }
 
-function memberToc(members: refer.ClassTrait['members']) {
+function memberToc(members: refer.Class['members']) {
     return simpleToc(members.map((member) => ({ key: member.name, value: member.tags?.__untagged__ })));
 }
 
@@ -22,9 +22,9 @@ export default () => {
     const router = useRouter();
     const { cid, module: moduleId, namespaces } = router.query;
 
-    let classTrait: refer.ClassTrait;
+    let classTrait: refer.Class;
     try {
-        classTrait = findTrait<refer.ClassTrait>('class', cid as string, moduleId as string, namespaces as string);
+        classTrait = findTrait<refer.Class>('class', cid as string, moduleId as string, namespaces as string);
     } catch (error) {
         return errorPage(error.toString());
     }
@@ -32,16 +32,14 @@ export default () => {
     return (
         <div className="container">
             <h3>
-                {`${classTrait.entity.name}`} {
+                {`${classTrait.parent.name}`} {
                     classTrait.typeParameters === undefined ?
                         null :
                         `<${classTrait.typeParameters.map((p) => p.name).join(', ')}>`
                 }
             </h3>
 
-            <div>
-                <ReactMarkdown source={classTrait.tags?.description ?? classTrait.tags?.__untagged__ ?? ''} />
-            </div>
+            <DescriptionText source={getDescription(classTrait)} />
 
             {isOptionalOrEmptyArray(classTrait.typeParameters) ? (<div></div>) :
                 (<div className="function-type-parameters">

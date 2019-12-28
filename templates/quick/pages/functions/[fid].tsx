@@ -1,9 +1,10 @@
 
 import React from 'react';
 import * as refer from '@cocos/refer';
-import { getModuleData, getProject, findTrait } from '../../src/Data';
+import { getModuleData, getProject, findTrait, getDescription } from '../../src/Data';
 import { useRouter } from 'next/router';
 import '../styles/Material.css';
+import DescriptionText from '../../src/DescriptionText';
 
 function errorPage(message: string) {
     return (<div>
@@ -24,14 +25,11 @@ const FunctionPage = () => {
 
     return (
         <div className="container">
-
             <h3>
-                {`${functionTrait.entity.name}(${functionTrait.parameters.map((param) => param.name).join(', ')})`}
+                {`${functionTrait.parent.name}(${functionTrait.parameters.map((param) => param.name).join(', ')})`}
             </h3>
 
-            <div>
-                {functionTrait.tags?.__untagged__}
-            </div>
+            <DescriptionText source={getDescription(functionTrait)} />
 
             {(!functionTrait.typeParameters || functionTrait.typeParameters.length === 0) ? (<div></div>) : (
                 <div className="function-type-parameters">
